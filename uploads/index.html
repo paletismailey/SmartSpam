@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultimate Task Reminder</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(-45deg, #4facfe, #00f2fe, #43e97b, #38f9d7);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0%;}
+    50% {background-position: 100%;}
+    100% {background-position: 0%;}
+}
+
+.quote {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.container {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    width: 420px;
+    border-radius: 15px;
+}
+
+input, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+}
+
+button {
+    background: blue;
+    color: white;
+}
+
+ul { list-style: none; padding: 0; }
+
+li {
+    background: rgba(255,255,255,0.7);
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+.completed { text-decoration: line-through; }
+
+.progress-bar {
+    height: 10px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: lime;
+}
+
+#badge {
+    display: none;
+    color: yellow;
+    text-align: center;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="quote" id="quoteBox"></div>
+
+<div class="container">
+    <h2>Task Reminder</h2>
+
+    <input id="taskTitle" placeholder="Title">
+    <textarea id="taskDesc" placeholder="Description"></textarea>
+    <input type="datetime-local" id="taskTime">
+    <button onclick="addTask()">Add Task</button>
+
+    <div id="progressText">0%</div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div id="badge">🏆 All Tasks Completed!</div>
+
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+if ("Notification" in window) {
+    Notification.requestPermission();
+}
+
+const quotes = [
+    "🚀 Start now!",
+    "💪 Discipline wins!",
+    "🔥 Keep pushing!",
+    "🎯 Stay focused!"
+];
+
+setInterval(() => {
+    quoteBox.innerText = quotes[Math.floor(Math.random()*quotes.length)];
+}, 5000);
+
+window.onload = () => {
+    displayTasks();
+    tasks.forEach(setReminder);
+    updateProgress();
+};
+
+function addTask() {
+    let t = taskTitle.value, d = taskDesc.value, time = taskTime.value;
+    if (!t || !d || !time) return alert("Fill all");
+
+    let task = {title:t, desc:d, time, completed:false};
+    tasks.push(task);
+    save();
+    displayTasks();
+    setReminder(task);
+}
+
+function displayTasks() {
+    let list = taskList;
+    list.innerHTML = "";
+
+    let grouped = {};
+    tasks.forEach((task, i) => {
+        let date = task.time.split("T")[0];
+        if (!grouped[date]) grouped[date] = [];
+        grouped[date].push({task,i});
+    });
+
+    for (let date in grouped) {
+        let h = document.createElement("h3");
+        h.innerText = "📅 " + date;
+        h.style.color="white";
+        list.appendChild(h);
+
+        grouped[date].forEach(({task,i}) => {
+            let li = document.createElement("li");
+            li.innerHTML = `
+                <span class="${task.completed?'completed':''}">
+                <b>${task.title}</b><br>${task.desc}<br>${task.time}
+                </span>
+                <button onclick="toggle(${i})">✔</button>
+                <button onclick="del(${i})">✖</button>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    updateProgress();
+    checkBadge();
+}
+
+function toggle(i) {
+    tasks[i].completed = !tasks[i].completed;
+    save(); displayTasks();
+}
+
+function del(i) {
+    tasks.splice(i,1);
+    save(); displayTasks();
+}
+
+function updateProgress() {
+    let total = tasks.length;
+    let done = tasks.filter(t=>t.completed).length;
+    let p = total?Math.round(done/total*100):0;
+
+    progressFill.style.width = p+"%";
+    progressText.innerText = p+"% Completed";
+}
+
+function checkBadge() {
+    let done = tasks.filter(t=>t.completed).length;
+    badge.style.display = (tasks.length && done===tasks.length) ? "block":"none";
+}
+
+function save() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function setReminder(task) {
+    let now = Date.now();
+    let t = new Date(task.time).getTime();
+    let delay = (t - 3600000) - now;
+
+    if (delay>0) {
+        setTimeout(()=>{
+            notify(task.title);
+            let id = setInterval(()=>{
+                if (!task.completed) notify("Pending: "+task.title);
+                else clearInterval(id);
+            },300000);
+        },delay);
+    }
+}
+
+function notify(msg) {
+    if (Notification.permission==="granted") {
+        new Notification(msg);
+    }
+}
+</script>
+
+</body>
+</html>

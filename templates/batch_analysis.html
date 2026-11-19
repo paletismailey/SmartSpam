@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h2>Batch Message Analysis</h2>
+
+    <p>
+        Upload a CSV file and analyze multiple messages.
+    </p>
+
+</div>
+
+
+<div class="glass-card upload-card">
+
+    <h3>📁 Upload CSV File</h3>
+
+    <p>
+
+        Your CSV should contain a column called
+        <strong>message</strong>.
+
+    </p>
+
+
+    <form
+        method="POST"
+        enctype="multipart/form-data">
+
+        <input
+            type="file"
+            name="file"
+            accept=".csv"
+            required>
+
+
+        <button
+            class="primary-btn"
+            type="submit">
+
+            🚀 Analyze CSV
+
+        </button>
+
+    </form>
+
+</div>
+
+
+{% if results %}
+
+<div class="table-card">
+
+    <h3>Batch Results</h3>
+
+
+    <div class="table-responsive">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Message</th>
+
+                    <th>Prediction</th>
+
+                    <th>Confidence</th>
+
+                    <th>Risk Level</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for result in results %}
+
+                    <tr>
+
+                        <td class="message-cell">
+
+                            {{ result.message }}
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="
+                                status-badge
+                                {{ result.prediction|lower }}
+                            ">
+
+                                {{ result.prediction }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ result.confidence }}%
+
+                        </td>
+
+
+                        <td>
+
+                            {{ result.risk_level }}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

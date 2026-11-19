@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="hero">
+
+    <div>
+
+        <span class="badge">
+            AI POWERED SECURITY
+        </span>
+
+        <h2>
+            Analyze suspicious messages
+            with <span>SmartSpam AI</span>
+        </h2>
+
+        <p>
+            Detect spam messages using machine learning,
+            TF-IDF text analysis and Naïve Bayes classification.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="analyzer-grid">
+
+
+    <!-- INPUT CARD -->
+
+    <section class="glass-card">
+
+        <h3>✉ Message Analyzer</h3>
+
+        <p class="card-description">
+
+            Paste your email or message below
+            and let the AI analyze it.
+
+        </p>
+
+
+        <form method="POST">
+
+            <textarea
+                name="message"
+                id="message"
+                placeholder="Paste your message here..."
+                required>{{ message }}</textarea>
+
+
+            <div class="text-info">
+
+                <span id="charCount">
+                    0 characters
+                </span>
+
+                <span id="wordCount">
+                    0 words
+                </span>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-btn">
+
+                🔍 Analyze Message
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- RESULT CARD -->
+
+    <section class="glass-card result-card">
+
+        <h3>🛡 Analysis Result</h3>
+
+
+        {% if result %}
+
+            <div class="
+                prediction-box
+                {% if result.prediction == 'SPAM' %}
+                    spam
+                {% else %}
+                    ham
+                {% endif %}
+            ">
+
+                <div class="prediction-icon">
+
+                    {% if result.prediction == "SPAM" %}
+                        ⚠
+                    {% else %}
+                        ✓
+                    {% endif %}
+
+                </div>
+
+
+                <h2>
+
+                    {{ result.prediction }}
+
+                </h2>
+
+
+                <p>
+                    AI Confidence:
+                    <strong>
+                        {{ result.confidence }}%
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <div class="confidence-section">
+
+                <div class="progress-label">
+
+                    <span>Confidence Score</span>
+
+                    <strong>
+                        {{ result.confidence }}%
+                    </strong>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill"
+                        style="width: {{ result.confidence }}%">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="analysis-stats">
+
+                <div class="mini-stat">
+
+                    <span>Words</span>
+
+                    <strong>
+                        {{ result.word_count }}
+                    </strong>
+
+                </div>
+
+
+                <div class="mini-stat">
+
+                    <span>Characters</span>
+
+                    <strong>
+                        {{ result.character_count }}
+                    </strong>
+
+                </div>
+
+
+                <div class="mini-stat">
+
+                    <span>URLs</span>
+
+                    <strong>
+                        {{ result.urls|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="risk-box">
+
+                <span>Risk Level</span>
+
+                <strong class="
+                    risk-{{ result.risk_level|lower }}
+                ">
+
+                    {{ result.risk_level }}
+
+                </strong>
+
+            </div>
+
+
+            {% if result.suspicious_words %}
+
+                <div class="suspicious-section">
+
+                    <h4>
+                        ⚠ Suspicious Words Found
+                    </h4>
+
+
+                    <div class="tags">
+
+                        {% for word in result.suspicious_words %}
+
+                            <span class="tag">
+
+                                {{ word }}
+
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+        {% else %}
+
+            <div class="empty-result">
+
+                <div class="empty-icon">
+
+                    🛡
+
+                </div>
+
+                <h3>
+                    Ready to Analyze
+                </h3>
+
+                <p>
+                    Enter a message and click
+                    Analyze Message.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+</div>
+
+
+<!-- FEATURES -->
+
+<div class="feature-grid">
+
+    <div class="feature-card">
+
+        <div>🤖</div>
+
+        <h3>AI Detection</h3>
+
+        <p>
+            Machine learning based
+            spam classification.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>🔗</div>
+
+        <h3>URL Detection</h3>
+
+        <p>
+            Detects links inside
+            suspicious messages.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>⚠</div>
+
+        <h3>Risk Analysis</h3>
+
+        <p>
+            Identifies suspicious
+            words and risk levels.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>📊</div>
+
+        <h3>Analytics</h3>
+
+        <p>
+            Track your prediction
+            history and statistics.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h2>Security Dashboard</h2>
+
+    <p>
+        Overview of your SmartSpam analysis activity.
+    </p>
+
+</div>
+
+
+<div class="stats-grid">
+
+    <div class="stat-card total">
+
+        <span>📨</span>
+
+        <div>
+
+            <p>Total Analyzed</p>
+
+            <h2>{{ total }}</h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat-card spam-stat">
+
+        <span>⚠</span>
+
+        <div>
+
+            <p>Spam Detected</p>
+
+            <h2>{{ spam }}</h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat-card ham-stat">
+
+        <span>✓</span>
+
+        <div>
+
+            <p>Safe Messages</p>
+
+            <h2>{{ ham }}</h2>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="dashboard-grid">
+
+
+    <div class="glass-card">
+
+        <h3>Spam vs Ham Analytics</h3>
+
+        <canvas id="spamChart"></canvas>
+
+    </div>
+
+
+    <div class="glass-card">
+
+        <h3>Recent Analysis</h3>
+
+        <div class="recent-list">
+
+            {% for item in recent %}
+
+                <div class="recent-item">
+
+                    <div>
+
+                        <strong>
+
+                            {{ item.prediction }}
+
+                        </strong>
+
+                        <p>
+
+                            {{ item.message[:70] }}
+
+                            {% if item.message|length > 70 %}
+                                ...
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <span class="
+                        status-badge
+                        {{ item.prediction|lower }}
+                    ">
+
+                        {{ item.prediction }}
+
+                    </span>
+
+                </div>
+
+            {% else %}
+
+                <p>No predictions yet.</p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const ctx = document
+    .getElementById("spamChart");
+
+
+new Chart(ctx, {
+
+    type: "doughnut",
+
+    data: {
+
+        labels: ["Spam", "Ham"],
+
+        datasets: [{
+
+            data: [
+                {{ spam }},
+                {{ ham }}
+            ],
+
+            backgroundColor: [
+                "#ef4444",
+                "#22c55e"
+            ]
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                position: "bottom"
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

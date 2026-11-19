@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h2>Prediction History</h2>
+
+    <p>
+        View and manage previous message analysis.
+    </p>
+
+</div>
+
+
+<div class="history-actions">
+
+    <form method="GET">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search messages...">
+
+        <button class="primary-btn">
+
+            Search
+
+        </button>
+
+    </form>
+
+
+    <a
+        href="{{ url_for('export_history') }}"
+        class="secondary-btn">
+
+        ⬇ Export CSV
+
+    </a>
+
+</div>
+
+
+<div class="table-card">
+
+    <div class="table-responsive">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Message</th>
+
+                    <th>Prediction</th>
+
+                    <th>Confidence</th>
+
+                    <th>Risk</th>
+
+                    <th>Date</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for record in records %}
+
+                    <tr>
+
+                        <td>
+                            {{ record.id }}
+                        </td>
+
+
+                        <td class="message-cell">
+
+                            {{ record.message }}
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="
+                                status-badge
+                                {{ record.prediction|lower }}
+                            ">
+
+                                {{ record.prediction }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ record.confidence }}%
+
+                        </td>
+
+
+                        <td>
+
+                            {{ record.risk_level }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ record.created_at }}
+
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="{{ url_for('delete_prediction', prediction_id=record.id) }}"
+                                class="delete-btn">
+
+                                Delete
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+
+                        <td colspan="7">
+
+                            No history found.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

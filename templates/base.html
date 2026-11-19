@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SmartSpam AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">✉</div>
+
+            <div>
+
+                <h2>SmartSpam</h2>
+
+                <span>AI Security</span>
+
+            </div>
+
+        </div>
+
+
+        <nav>
+
+            <a href="{{ url_for('index') }}"
+               class="nav-link">
+
+                <span>⌂</span>
+                Analyze
+
+            </a>
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-link">
+
+                <span>▣</span>
+                Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('history') }}"
+               class="nav-link">
+
+                <span>◷</span>
+                History
+
+            </a>
+
+
+            <a href="{{ url_for('batch_analysis') }}"
+               class="nav-link">
+
+                <span>⇅</span>
+                Batch Analysis
+
+            </a>
+
+
+            <a href="{{ url_for('about') }}"
+               class="nav-link">
+
+                <span>ⓘ</span>
+                About
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <button id="themeToggle"
+                    class="theme-btn">
+
+                ☀ / 🌙 Theme
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>SmartSpam AI</h1>
+
+                <p>Intelligent Message Security Analyzer</p>
+
+            </div>
+
+
+            <div class="status">
+
+                <span class="status-dot"></span>
+
+                AI Model Active
+
+            </div>
+
+        </header>
+
+
+        <!-- FLASH MESSAGE -->
+
+        {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="alert">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        {% block content %}
+
+        {% endblock %}
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
